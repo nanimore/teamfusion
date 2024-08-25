@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -31,6 +32,8 @@ public class PreCacheJob {
 
     //设置重点用户
     private List<Long> mainUserList = Arrays.asList(1L,2L,3L,4L,5L);
+
+    private Random random = new Random();
 
     //每天执行，预热推荐用户
     // 秒，分，时，日，月，周
@@ -50,7 +53,7 @@ public class PreCacheJob {
                     ValueOperations<String,Object> valueOperations = redisTemplate.opsForValue();
                     //写缓存
                     try {
-                        valueOperations.set(redisKey,userPage,30000, TimeUnit.MILLISECONDS);
+                        valueOperations.set(redisKey,userPage,30000+ random.nextInt(1000), TimeUnit.MILLISECONDS);
                         log.info("redis set preCache key success");
                     }catch (Exception e){
                         log.error("redis set key error",e);
